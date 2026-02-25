@@ -889,6 +889,12 @@ struct CaptureInfo {
 	XrunPositions xruns;
 };
 
+enum MarkerLocatePriority {
+	FirstMarker,
+	LastMarker,
+	NextMarker,
+};
+
 enum LoopFadeChoice {
 	NoLoopFade,
 	EndLoopFade,

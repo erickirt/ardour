@@ -2788,6 +2788,12 @@ LuaBindings::common (lua_State* L)
 		.addConst ("FadeSymmetric", ARDOUR::FadeShape(FadeSymmetric))
 		.endNamespace ()
 
+		.beginNamespace ("MarkerLocatePriority")
+		.addConst ("FirstMarker", ARDOUR::MarkerLocatePriority(FirstMarker))
+		.addConst ("LastMarker", ARDOUR::MarkerLocatePriority(LastMarker))
+		.addConst ("NextMarker", ARDOUR::MarkerLocatePriority(NextMarker))
+		.endNamespace ()
+
 		.beginNamespace ("LoopFadeChoice")
 		.addConst ("NoLoopFade", ARDOUR::LoopFadeChoice(NoLoopFade))
 		.addConst ("EndLoopFade", ARDOUR::LoopFadeChoice(EndLoopFade))

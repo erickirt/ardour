@@ -3196,16 +3196,57 @@ OSC::set_marker (const char* types, lo_arg **argv, int argc, lo_message msg)
 		case 's':
 			{
 				Location *cur_mark = 0;
-				for (Locations::LocationList::const_iterator l = ll.begin(); l != ll.end(); ++l) {
-					if ((*l)->is_mark ()) {
-						if (strcmp (&argv[0]->s, (*l)->name().c_str()) == 0) {
-							session->request_locate ((*l)->start_sample (), false, MustStop);
-							return 0;
-						} else if ((*l)->start () == session->transport_sample()) {
-							cur_mark = (*l);
+
+				switch (Config->get_marker_locate_priority()) {
+					case FirstMarker:
+						for (const auto& l : ll) {
+							if (l->is_mark ()) {
+								if (strcmp (&argv[0]->s, l->name().c_str()) == 0) {
+									session->request_locate (l->start_sample (), false, MustStop);
+									return 0;
+								} else if (l->start () == session->transport_sample()) {
+									cur_mark = l;
+								}
+							}
 						}
-					}
+						break;
+					case LastMarker:
+						for (auto l = ll.rbegin(); l != ll.rend(); ++l) {
+							if ((*l)->is_mark ()) {
+								if (strcmp (&argv[0]->s, (*l)->name().c_str()) == 0) {
+									session->request_locate ((*l)->start_sample (), false, MustStop);
+									return 0;
+								} else if ((*l)->start () == session->transport_sample()) {
+									cur_mark = (*l);
+								}
+							}
+						}
+						break;
+					case NextMarker:
+						Location *first = nullptr;
+						for (const auto& l : ll) {
+							if (l->is_mark ()) {
+								if (strcmp (&argv[0]->s, l->name().c_str()) == 0) {
+									if (l->start_sample() > session->transport_sample()) {
+										session->request_locate (l->start_sample (), false, MustStop);
+										return 0;
+									}
+
+									if (!first) {
+										first = l;
+									}
+								} else if (l->start () == session->transport_sample()) {
+									cur_mark = l;
+								}
+							}
+						}
+						if (first) {
+							session->request_locate (first->start_sample (), false, MustStop);
+							return 0;
+						}
+						break;
 				}
+
 				if (cur_mark) {
 					cur_mark->set_name (&argv[0]->s);
 					return 0;
@@ -3224,15 +3265,15 @@ OSC::set_marker (const char* types, lo_arg **argv, int argc, lo_message msg)
 			return -1;
 			break;
 	}
-	std::vector<ArdourSurface::LocationMarker> lm;
+	std::vector<LocationMarker> lm;
 	// get Locations that are marks
 	for (Locations::LocationList::const_iterator l = ll.begin(); l != ll.end(); ++l) {
 		if ((*l)->is_mark ()) {
-			lm.push_back (ArdourSurface::LocationMarker((*l)->name(), (*l)->start_sample ()));
+			lm.push_back (LocationMarker((*l)->name(), (*l)->start_sample ()));
 		}
 	}
 	// sort them by position
-	ArdourSurface::LocationMarkerSort location_marker_sort;
+	LocationMarkerSort location_marker_sort;
 	std::sort (lm.begin(), lm.end(), location_marker_sort);
 	// go there
 	if (marker < lm.size()) {

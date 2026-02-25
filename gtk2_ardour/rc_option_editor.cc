@@ -3825,6 +3825,17 @@ These settings will only take effect after %1 is restarted.\n\
 	                     );
 	add_option (_("Transport"), bo);
 
+	ComboOption<MarkerLocatePriority>* mlp = new ComboOption<MarkerLocatePriority> (
+					"marker-locate-priority-choice",
+					_("Marker Locate Priority"),
+					sigc::mem_fun (*_rc_config, &RCConfiguration::get_marker_locate_priority),
+					sigc::mem_fun (*_rc_config, &RCConfiguration::set_marker_locate_priority)
+					);
+	mlp->add (FirstMarker, _("First"));
+	mlp->add (LastMarker, _("Last"));
+	mlp->add (NextMarker, _("Next"));
+	add_option (_("Transport"), mlp);
+	Gtkmm2ext::UI::instance()->set_tip (mlp->tip_widget(), _("Options for locating to program change/snapshot markers"));
 
 	bo = new BoolOption ("stop-on-grid",
 	                     _("Stop transport using the current grid (if any)"),
