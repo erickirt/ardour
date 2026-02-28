@@ -3792,12 +3792,12 @@ Mixer_UI::register_actions ()
 	if (!Profile->get_mixbus ()) {
 		act = ActionManager::register_toggle_action (group, "ToggleMixerList", _("Mixer: Show Sidebar List"), sigc::mem_fun (*this, &Tabbable::att_left_button_toggled));
 		left_attachment_button.set_related_action (act);
-#pragma GCC warning "this string can be used after 9.0"
+#warning this string can be used after 9.0
 		// Gtkmm2ext::set_tooltip (right_attachment_button, _("Show/Hide Left Panel"));
 	} else {
 		act = ActionManager::register_toggle_action (group, "ToggleMixerList", _("Mixer: Show Sidebar List"), sigc::mem_fun (*this, &Tabbable::att_right_button_toggled));
 		right_attachment_button.set_related_action (act);
-#pragma GCC warning "this string can be used after 9.0"
+#warning this string can be used after 9.0
 		// Gtkmm2ext::set_tooltip (right_attachment_button, _("Show/Hide Right Panel"));
 	}
 
