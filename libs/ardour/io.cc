@@ -268,6 +268,8 @@ IO::remove_port (std::shared_ptr<Port> port, void* src)
 	}
 
 	_session.set_dirty ();
+	/* drop references */
+	_ports.flush ();
 
 	return 0;
 }
