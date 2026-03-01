@@ -3342,6 +3342,7 @@ OSC::rename_marker (char *on, char *nn, lo_message msg)
 			}
 			break;
 	}
+	return -1;
 }
 
 int
